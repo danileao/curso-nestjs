@@ -4,9 +4,17 @@ import { LoginModule } from './modules/login/login.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { TaskUserModule } from './modules/tasks/task-user.module';
+import { ScheduleTaskModule } from './infra/jobs/schedule.module';
+import { PrismaModule } from './infra/database/prisma.module';
 
 @Module({
-  imports: [UserModule, LoginModule, TaskUserModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    LoginModule,
+    TaskUserModule,
+    ScheduleTaskModule,
+  ],
   controllers: [],
   providers: [
     {

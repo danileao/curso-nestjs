@@ -1,10 +1,12 @@
 import { PrismaService } from 'src/infra/database/prisma.service';
 import {
+  TaskUserNotificationDTO,
   TaskUserRequestDTO,
   TaskUserResponseDTO,
 } from '../../dto/task-user.dto';
 import { ITaskUserRepository } from '../task-user.repository';
 import { Injectable } from '@nestjs/common';
+import { startOfDay, endOfDay } from '../../../../infra/utils/date';
 
 @Injectable()
 export class TaskUserPrismaRepository implements ITaskUserRepository {
@@ -30,5 +32,37 @@ export class TaskUserPrismaRepository implements ITaskUserRepository {
         },
       },
     });
+  }
+
+  // 16-06-2023 00:00:00
+  // 16-06-2023 23:59:59
+
+  async findAllStartDay(): Promise<TaskUserNotificationDTO[] | null> {
+    const allTasks = await this.prisma.taskUser.findMany({
+      where: {
+        AND: [
+          {
+            task: {
+              startAt: {
+                gte: startOfDay(),
+                lte: endOfDay(),
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        task: {
+          select: {
+            startAt: true,
+            endAt: true,
+            title: true,
+            description: true,
+          },
+        },
+        user: true,
+      },
+    });
+    return allTasks;
   }
 }
