@@ -12,7 +12,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       {
         name: 'NOTIFICATION',
         transport: Transport.TCP,
-        options: { port: 3002, host: '127.0.0.1' },
+        options: {
+          port: Number(process.env.MS_PORT) ?? 3002,
+          host: process.env.MS_HOST ?? '127.0.0.1',
+        },
       },
     ]),
   ],
