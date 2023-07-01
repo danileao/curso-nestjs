@@ -11,10 +11,20 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'NOTIFICATION',
-        transport: Transport.TCP,
+        transport: Transport.KAFKA,
         options: {
-          port: Number(process.env.MS_PORT) ?? 3002,
-          host: process.env.MS_HOST ?? '127.0.0.1',
+          client: {
+            brokers: ['127.0.0.1:9092'],
+          },
+          consumer: {
+            groupId: 'gp_app_task_manager',
+          },
+          producer: {
+            allowAutoTopicCreation: true,
+            retry: {
+              retries: 1,
+            },
+          },
         },
       },
     ]),
